@@ -52,7 +52,7 @@ namespace ToDoRestfulAPI
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
             app.UseRouting();
 

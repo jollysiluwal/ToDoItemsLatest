@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>To-do CRUD</title>
+</head>
+<body>
+    <div class="container align-items-center">
+        <h1 class="text-center mt-5 mb-5">To-do Items</h1>
+        <div id="insertForm">
+            <form action="javascript:void(0);" method="POST" onsubmit="addItem()" class="col-lg-6 offset-lg-3">
+                <div class="form-row justify-content-center">
+                    <!--<div class="col-lg-6 my-2">-->
+                    <!--<label for="add-name" class="sr-only">Add Things to Do</label>-->
+                    <!--<input type="text" id="add-name" placeholder="New to-do" class="form-control-lg">-->
+                    <!--</div>-->
+                    <label class="sr-only" for="add-name">Add Items</label>
+                    <input class="form-control form-control-lg" type="text" id="add-name" placeholder="To do item">
+
+                    <div class="col-lg-2 my-2">
+                        <input type="submit" class="btn btn-outline-primary" value="Add" />
+                        <!--<input type="submit" value="Add" class="btn btn-primary mb-2 btn-block">-->
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="editForm">
+            <form action="javascript:void(0);" onsubmit="updateItem()" class="col-lg-6 offset-lg-3">
+                <div class="form-row justify-content-center">
+                    <input type="hidden" id="edit-id">
+                    <div class="col-auto my-1">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="edit-isComplete">
+                            <label for="edit-isComplete" class="form-check-label">Is Completed?</label>
+                        </div>
+                    </div>
+                    <div class="col-auto my-1">
+                        <label for="edit-name" class="sr-only">Edit Name</label>
+                        <input class="form-control form-control-lg" type="text" id="edit-name">
+                        <!--<input type="text" id="edit-name" class="form-control">-->
+                    </div>
+                    <div class="col-auto my-1">
+                        <input type="submit" class="btn btn-outline-secondary" value="Save" />
+                        <!--<input type="submit" value="Save" class="btn btn-success mb-2 btn-block ">-->
+                    </div>
+                    <div class="col-auto my-1">
+                        <a onclick="closeInput()" aria-label="Close" class="mb-0">&#10006;</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <p class="lead text-center" id="counter"></p>
+        <div class="table-responsive-sm">
+            <table class="table">
+                <caption>List of task to-do</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Is Complete?</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Edit To-Do Task</th>
+                        <th scope="col">Delete To-Do Task</th>
+                    </tr>
+                </thead>
+                <tbody id="todos"></tbody>
+            </table>
+        </div>
+        <script src="js/site.js" asp-append-version="true"></script>
+        <script type="text/javascript">getItems();</script>
+    </div>
+</body>
+</html>

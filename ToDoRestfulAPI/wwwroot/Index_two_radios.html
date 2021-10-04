@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>To-do Items</title>
+    <script>$(document).ready(function () {
+            $(function () {
+                $("#filters").change(function () {
+                    //Perform filtering when one or more checkboxes are checked
+                    var checkedCount = $("input:checked").length;
+                    if (checkedCount > 0) {
+                        //Get values all checked boxes
+                        var values = $("input:checked").map(function () {
+                            return this.value;
+                        }).get();
+
+                        //Hide all first and then show the rows having the first column value matching the checkbox value
+                        $('#todos')
+                            .hide()
+                            .filter(function () {
+                                return values.indexOf($(this).find('td:first').text()) > -1;
+                            }).show();
+                    } else {
+                        //Display all
+                        $('#todos').show();
+                    }
+                });
+            });
+        });</script>
+</head>
+<body>
+    <div class="container align-items-center">
+        <h1 class="text-center mt-5 mb-5">To-do Items</h1>
+        <div id="insertForm">
+            <form action="javascript:void(0);" method="POST" onsubmit="addItem()" class="col-lg-6 offset-lg-3">
+                <div class="form-row justify-content-center">
+
+                    <div class="input-group mb-3">
+                        <input type="text" id="add-name" class="form-control" placeholder="To do item" aria-label="Add Items" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="submit">Add</button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div id="editForm">
+            <form action="javascript:void(0);" onsubmit="updateItem()" class="col-lg-6 offset-lg-3">
+                <div class="form-row justify-content-center">
+                    <input type="hidden" id="edit-id">
+                    <div class="input-group mb-3">
+                        <div class="col-auto">
+                            <div class="form-check mb-2">
+
+                                <label class="radio-inline">
+                                    <input type="radio" name="taskStatus" id="pending">Pending
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="taskStatus" id="completed">Completed
+                                </label>
+
+                            </div>
+                        </div>
+                        <input type="text" id="edit-name" class="form-control">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Save</button>
+                        </div>
+                    </div>
+                    <div class="col-auto my-1">
+                        <a onclick="closeInput()" aria-label="Close" class="mb-0">&#10006;</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="table-responsive-sm">
+            <div id="filters">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="pendingCheckbox" value="Pending">
+                    <label class="form-check-label" for="pendingCheckbox">Pending</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="completedCheckbox" value="Completed">
+                    <label class="form-check-label" for="completedCheckbox">Completed</label>
+                </div>
+            </div>
+            <div class="form-check form-check-inline">
+                <p class="lead text-center" id="counter"></p>
+            </div>
+
+            <table class="table">
+                <caption>List of task to-do</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Status</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="todos"></tbody>
+            </table>
+        </div>
+        <script src="js/site.js" asp-append-version="true"></script>
+        <script type="text/javascript">getItems();</script>
+    </div>
+</body>
+</html>

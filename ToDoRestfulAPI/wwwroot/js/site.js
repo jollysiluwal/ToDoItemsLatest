@@ -5,17 +5,19 @@
 
 const uri = 'api/TodoItems';
 let todos = [];
-function getItems() {
+function getToDoItems() {
+    document.getElementById('editForm').style.display = 'none';
     fetch(uri)
         .then(response => response.json())
-        .then(data => _displayItems(data))
-        .catch(error => console.error('Unable to get items.', error));
+        .then(data => _displayToDoItems(data))
+        .catch(error => console.error('Unable to get to-do items.', error));
 }
-function addItem() {
+
+function addToDoItem() {
     const addNameTextbox = document.getElementById('add-name');
     const item = {
         isComplete: false,
-        name: addNameTextbox.value.trim()
+        description: addNameTextbox.value.trim()
     };
     fetch(uri, {
         method: 'POST',
@@ -27,32 +29,38 @@ function addItem() {
     })
         .then(response => response.json())
         .then(() => {
-            getItems();
+            getToDoItems();
             addNameTextbox.value = '';
         })
-        .catch(error => console.error('Unable to add item.', error));
+        .catch(error => console.error('Unable to add to-do item.', error));
 }
-function deleteItem(id) {
-    fetch(`${uri}/${id}`, {
-        method: 'DELETE'
-    })
-        .then(() => getItems())
-        .catch(error => console.error('Unable to delete item.', error));
+
+function deleteToDoItem(id) {
+    var result = confirm("Are you sure to delete the to-do item?");
+    if (result) {
+        fetch(`${uri}/${id}`, {
+            method: 'DELETE'
+        })
+            .then(() => getToDoItems())
+            .catch(error => console.error('Unable to delete to-do item.', error));
+    }
 }
+
 function displayEditForm(id) {
     const item = todos.find(item => item.id === id);
 
-    document.getElementById('edit-name').value = item.name;
+    document.getElementById('edit-description').value = item.description;
     document.getElementById('edit-id').value = item.id;
     document.getElementById('edit-isComplete').checked = item.isComplete;
     document.getElementById('editForm').style.display = 'block';
 }
-function updateItem() {
+
+function updateToDoItem() {
     const itemId = document.getElementById('edit-id').value;
     const item = {
         id: parseInt(itemId, 10),
         isComplete: document.getElementById('edit-isComplete').checked,
-        name: document.getElementById('edit-name').value.trim()
+        description: document.getElementById('edit-description').value.trim()
     };
     fetch(`${uri}/${itemId}`, {
         method: 'PUT',
@@ -62,47 +70,53 @@ function updateItem() {
         },
         body: JSON.stringify(item)
     })
-        .then(() => getItems())
-        .catch(error => console.error('Unable to update item.', error));
-    closeInput();
+        .then(() => getToDoItems())
+        .catch(error => console.error('Unable to update to-do item.', error));
+    document.getElementById('edit-isComplete').checked = false
+    document.getElementById('editForm').style.display = 'none';
     return false;
 }
-function closeInput() {
-    document.getElementById('editForm').style.display = 'none';
-}
+
 function _displayCount(itemCount) {
-    const name = (itemCount === 1) ? 'to-do' : 'to-dos';
+    const name = (itemCount === 1) ? 'task to-do' : 'task to-dos';
     document.getElementById('counter').innerText = `${itemCount} ${name}`;
 }
-function _displayItems(data) {
+
+function _displayToDoItems(data) {
     const tBody = document.getElementById('todos');
     tBody.innerHTML = '';
     _displayCount(data.length);
     const button = document.createElement('button');
     data.forEach(item => {
-        let isCompleteCheckbox = document.createElement('input');
-        isCompleteCheckbox.type = 'checkbox';
-        isCompleteCheckbox.disabled = true;
-        isCompleteCheckbox.checked = item.isComplete;
-        let editButton = button.cloneNode(false);
-        editButton.innerText = 'Edit';
-        editButton.classList.add('text-center', 'btn', 'btn-warning', 'btn-sm', 'btn-block');
-        editButton.setAttribute('onclick', `displayEditForm(${item.id})`);
-        let deleteButton = button.cloneNode(false);
-        deleteButton.innerText = 'Delete';
-        deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'btn-block');
-        deleteButton.setAttribute('onclick', `deleteItem(${item.id})`);
-        let tr = tBody.insertRow();
-
-        let td1 = tr.insertCell(0);
-        td1.appendChild(isCompleteCheckbox);
-        let td2 = tr.insertCell(1);
-        let textNode = document.createTextNode(item.name);
-        td2.appendChild(textNode);
-        let td3 = tr.insertCell(2);
-        td3.appendChild(editButton);
-        let td4 = tr.insertCell(3);
-        td4.appendChild(deleteButton);
+        addTableRow(tBody, item, button); 
     });
     todos = data;
+}
+
+function addTableRow(tBody, item, button) {
+    let statusLabel = document.createElement('label');
+    let status = (item.isComplete) ? 'Completed' : 'Pending';
+    statusLabel.innerHTML = status;
+
+    let editButton = button.cloneNode(false);
+    editButton.innerText = 'Edit';
+    editButton.classList.add('text-center', 'btn', 'btn-warning', 'btn-sm', 'btn-block');
+    editButton.setAttribute('onclick', `displayEditForm(${item.id})`);
+
+    let deleteButton = button.cloneNode(false);
+    deleteButton.innerText = 'Delete';
+    deleteButton.classList.add('btn', 'btn-danger', 'btn-sm', 'btn-block');
+    deleteButton.setAttribute('onclick', `deleteToDoItem(${item.id})`);
+
+    let tr = tBody.insertRow();
+    tr.classList.add('mainbody');
+    let td1 = tr.insertCell(0);
+    td1.appendChild(statusLabel);
+    let td2 = tr.insertCell(1);
+    let textNode = document.createTextNode(item.description);
+    td2.appendChild(textNode);
+    let td3 = tr.insertCell(2);
+    td3.appendChild(editButton);
+    let td4 = tr.insertCell(3);
+    td4.appendChild(deleteButton);
 }

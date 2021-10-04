@@ -1,73 +1,104 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <meta charset="UTF-8">
-    <title>To-do CRUD</title>
+    <title>To-do Items</title>
+    <script>
+        $(function () {
+            $("#filters").change(function () {
+                //Perform filtering when one or more checkboxes are checked
+                var checkedCount = $("input:checkbox:checked").length;
+                if (checkedCount > 0) {
+                    //Get values all checked boxes
+                    var values = $("input:checkbox:checked").map(function () {
+                        return this.value;
+                    }).get();
+
+                    //Hide all first and then show the rows having the first column value matching the checkbox value
+                    $('table tbody tr.mainbody')
+                        .hide()
+                        .filter(function () {
+                            return values.indexOf($(this).find('td:first').text()) > -1;
+                        }).show();
+                } else {
+                    //Display all
+                    $('table tbody tr.mainbody').show();
+                }
+            });
+        });
+    </script>
 </head>
 <body>
-    <div class="jumbotron text-center">
-        <h1>To-do CRUD</h1>
-    </div>
     <div class="container align-items-center">
+        <h1 class="text-center mt-5 mb-5">To-do Items</h1>
         <div id="insertForm">
-            <h3 class="text-center">Add</h3>
-            <form action="javascript:void(0);" method="POST" onsubmit="addItem()" class="col-lg-6 offset-lg-3">
+            <form action="javascript:void(0);" method="POST" onsubmit="addToDoItem()" class="col-lg-6 offset-lg-3">
                 <div class="form-row justify-content-center">
-                    <div class="col-lg-6 my-2">
-                        <label for="add-name" class="sr-only">Add Things to Do</label>
-                        <input type="text" id="add-name" placeholder="New to-do" class="form-control mb-2">
+                    <div class="input-group mb-3">
+                        <input type="text" id="add-name" class="form-control" placeholder="To do item" aria-label="Add Items" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="submit">Add</button>
+                        </div>
                     </div>
-                    <div class="col-lg-2 my-2">
-                        <input type="submit" value="Add" class="btn btn-primary mb-2 btn-block">
-                    </div>
+
                 </div>
             </form>
         </div>
         <div id="editForm">
-            <h3 class="text-center">Edit</h3>
-            <form action="javascript:void(0);" onsubmit="updateItem()" class="col-lg-6 offset-lg-3">
+            <form action="javascript:void(0);" onsubmit="updateToDoItem()" class="col-lg-6 offset-lg-3">
                 <div class="form-row justify-content-center">
                     <input type="hidden" id="edit-id">
-                    <div class="col-auto my-1">
+                    <div class="input-group mb-3">
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="edit-isComplete">
-                            <label for="edit-isComplete" class="form-check-label">Is Completed?</label>
+                            <label for="edit-isComplete" class="form-check-label">Completed?</label>
                         </div>
-                    </div>
-                    <div class="col-auto my-1">
-                        <label for="edit-name" class="sr-only">Edit Name</label>
-                        <input type="text" id="edit-name" class="form-control">
-                    </div>
-                    <div class="col-auto my-1">
-                        <input type="submit" value="Save" class="btn btn-success mb-2 btn-block ">
-                    </div>
-                    <div class="col-auto my-1">
-                        <a onclick="closeInput()" aria-label="Close" class="mb-0">&#10006;</a>
+                        <input type="text" id="edit-description" class="form-control ml-2" aria-label="Edit Items" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-success" type="submit">Save</button>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
-        <p class="lead text-center" id="counter"></p>
         <div class="table-responsive-sm">
-            <table class="table">
-                <caption>List of task to-do</caption>
+            <div id="filters">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="pendingCheckbox" value="Pending">
+                    <label class="form-check-label" for="pendingCheckbox">Pending</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="completedCheckbox" value="Completed">
+                    <label class="form-check-label" for="completedCheckbox">Completed</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    
+                </div>
+            </div>
+            <table class="table table-striped">
+                <caption>
+                    <p class="lead text-right" id="counter"></p>
+                </caption>
                 <thead>
                     <tr>
-                        <th scope="col">Is Complete?</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Edit To-Do Task</th>
-                        <th scope="col">Delete To-Do Task</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
                     </tr>
                 </thead>
                 <tbody id="todos"></tbody>
             </table>
         </div>
         <script src="js/site.js" asp-append-version="true"></script>
-        <script type="text/javascript">getItems();</script>
+        <script type="text/javascript">getToDoItems();</script>
     </div>
 </body>
 </html>
